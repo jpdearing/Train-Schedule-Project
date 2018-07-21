@@ -38,18 +38,22 @@ $(document).ready(function () {
 
         var mostRecentAdd = snapshot.val();
 
-        var firebaseName =  `<th scope="col">${mostRecentAdd.name}</th>`;
-        console.log(mostRecentAdd.name)
-        var firebaseDestination =  `<th scope="col">${mostRecentAdd.destination}</th>`;
-        var firebaseFirstTrain =  `<th scope="col">${mostRecentAdd.firstTrain}</th>`;
-        var firebaseFrequency = `<th scope="col">${mostRecentAdd.frequency}</th>`;
-        var firebaseMinutesAway = `<th scope="col">${mostRecentAdd.name}</th>`;
+        var firebaseName = mostRecentAdd.name;
+        var firebaseDestination = mostRecentAdd.destination;
+        var firebaseFirstTrain = mostRecentAdd.firstTrain;
+        var firebaseFrequency = mostRecentAdd.frequency;
+        var firebaseMinutesAway = 0
+        var nextArrivalTime = null
 
-        //fix the damn time!
-        var timeRemaining = moment().diff(moment.unix(firebaseFirstTrain), "timeUntilArrival") % firebaseFrequency;
-        var timeUntilArrival = firebaseFrequency - timeRemaining;
-        var nextArrivalTime = moment().add(timeUntilArrival, "m").format("HH:mm");
+        var firstTime = moment(firebaseFirstTrain, "HH:mm").subtract(1, "years");
+        var diffTime = moment().diff(moment(firstTime), "minutes");
+        var tRemainder = diffTime % firebaseFrequency;
+        firebaseMinutesAway = firebaseFrequency - tRemainder;
+        nextArrivalTime = moment().add(firebaseMinutesAway, "minutes").calendar();
 
-        $("#trainTable > tbody").append("<tr><th>" + firebaseName + "</th><th>" + firebaseDestination + "</td><th>" + firebaseFrequency + "</th><th>" + nextArrivalTime + "</th><th>" + firebaseMinutesAway + "</th></tr>");
+
+
+        //append data table row
+        $("#trainBody").append("<tr><td>" + firebaseName + "</td><td>" + firebaseDestination + "</td><td>" + firebaseFrequency + "</td><td>" + nextArrivalTime + "</td><td>" + firebaseMinutesAway + "</td></tr>");
     });
 });
